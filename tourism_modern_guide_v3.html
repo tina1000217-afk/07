@@ -1,0 +1,354 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>交通部觀光署 組織架構互動探索</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+      @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700;900&display=swap');
+      body {
+        font-family: 'Noto Sans TC', sans-serif;
+        background-color: #f8fafc;
+      }
+      .chart-pane {
+        display: none;
+      }
+      .chart-pane.active {
+        display: block;
+      }
+    </style>
+  </head>
+    
+  <body class="flex flex-col h-screen overflow-hidden">
+    <!-- Header -->
+    <header class="bg-gradient-to-r from-violet-600 via-indigo-600 to-sky-500 text-white shadow-xl z-20">
+      <div class="max-w-7xl mx-auto px-6 py-4 flex flex-col md:flex-row items-center justify-between gap-4">
+        <div class="flex items-center space-x-3">
+          <div class="bg-white/20 backdrop-blur-md p-3 rounded-2xl shadow-inner border border-white/30">
+            <svg class="w-7 h-7 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3.055 11H5a2 2 0 012 2v1a2 2 0 002 2 2 2 0 012 2v2.945M8 3.935V5.5A2.5 2.5 0 0010.5 8h.5a2 2 0 012 2 2 2 0 104 0 2 2 0 012-2h1.064M15 20.488V18a2 2 0 012-2h3.064M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+            </svg>
+          </div>
+          <div>
+            <h1 class="text-2xl font-black tracking-wider drop-shadow-sm">交通部觀光署</h1>
+            <p class="text-xs text-indigo-100 font-medium">✨ 潮玩台灣・組織架構全景探索</p>
+          </div>
+        </div>
+        
+        <!-- Toolbar Tabs -->
+        <div class="flex bg-black/20 p-1.5 rounded-2xl backdrop-blur-md border border-white/20 shadow-inner">
+          <button class="btn px-5 py-2.5 rounded-xl text-sm font-bold transition-all duration-300 text-white shadow-md bg-white/30" onclick="switchChart('force', event)">
+            🪐 力量導向圖
+          </button>
+          <button class="btn px-5 py-2.5 rounded-xl text-sm font-bold transition-all duration-300 text-indigo-100 hover:text-white" onclick="switchChart('sunburst', event)">
+            ☀️ 旭日圖
+          </button>
+          <button class="btn px-5 py-2.5 rounded-xl text-sm font-bold transition-all duration-300 text-indigo-100 hover:text-white" onclick="switchChart('partition', event)">
+            📊 水平分區圖
+          </button>
+        </div>
+      </div>
+    </header>
+
+    <!-- Main Content & Guide Grid -->
+    <div class="flex-1 flex flex-col lg:flex-row overflow-hidden p-6 gap-6">
+      
+      <!-- Chart Viewport Card -->
+      <main class="flex-1 relative bg-white shadow-2xl rounded-3xl border border-slate-100 overflow-hidden flex flex-col">
+        <div class="absolute top-4 left-4 z-10 bg-slate-900/70 backdrop-blur-md text-white text-xs px-3 py-1.5 rounded-full shadow pointer-events-none">
+          💡 操作小撇步：點擊圓圈展開部門，滑鼠移上去看全名！
+        </div>
+        <div id="pane-force" class="chart-pane active absolute inset-0 w-full h-full"></div>
+        <div id="pane-sunburst" class="chart-pane absolute inset-0 w-full h-full"></div>
+        <div id="pane-partition" class="chart-pane absolute inset-0 w-full h-full"></div>
+      </main>
+
+      <!-- Sidebar Guide & Simple Explanation -->
+      <aside class="w-full lg:w-96 bg-gradient-to-br from-slate-900 to-indigo-950 text-white rounded-3xl shadow-2xl p-6 flex flex-col justify-between border border-indigo-900/50 overflow-y-auto">
+        <div>
+          <div class="flex items-center space-x-2 text-indigo-400 font-bold text-sm tracking-widest uppercase mb-3">
+            <span>📖 互動操作指南（超簡單上手）</span>
+          </div>
+          <h2 class="text-xl font-black mb-4 leading-snug">點選、拖曳、探索全台觀光地圖！</h2>
+          
+          <div class="space-y-4 text-sm text-slate-300">
+            <!-- Step 1 -->
+            <div class="bg-white/5 p-4 rounded-2xl border border-white/10 hover:border-indigo-500/50 transition">
+              <div class="flex items-center space-x-3 mb-2">
+                <div class="bg-indigo-500 text-white w-6 h-6 rounded-full flex items-center justify-center font-bold text-xs">1</div>
+                <h3 class="font-bold text-white">上方按鈕：隨時切換視覺特效</h3>
+              </div>
+              <p class="text-xs text-slate-400 leading-relaxed">覺得一種排版看不夠？點擊最上方右側的「🪐 力量導向圖」、「☀️ 旭日圖」或「📊 水平分區圖」，畫面會立刻切換成不同的酷炫圖表風格！</p>
+            </div>
+
+            <!-- Step 2 -->
+            <div class="bg-white/5 p-4 rounded-2xl border border-white/10 hover:border-indigo-500/50 transition">
+              <div class="flex items-center space-x-3 mb-2">
+                <div class="bg-indigo-500 text-white w-6 h-6 rounded-full flex items-center justify-center font-bold text-xs">2</div>
+                <h3 class="font-bold text-white">點擊與懸停：挖出隱藏的部門細節</h3>
+              </div>
+              <p class="text-xs text-slate-400 leading-relaxed mb-2">● **點擊任一圓圈或方塊**：可以像打開資料夾一樣，展開該單位的下屬部門（例如點「13處國家風景區」就會展開所有地名）。</p>
+              <p class="text-xs text-slate-400 leading-relaxed">● **滑鼠游標停在文字上**：因為畫面空間有限，部分地名使用了簡稱（如「東北角風管處」），只要把滑鼠放上去，就會跳出**完整官方全名**！</p>
+            </div>
+
+
+          </div>
+        </div>
+
+        <div class="mt-6 pt-4 border-t border-white/10 text-center">
+          <p class="text-xs text-indigo-300 font-medium">✨ 輕鬆掌握交通部觀光署組織架構</p>
+        </div>
+      </aside>
+
+    </div>
+
+    <!-- amCharts 5 Scripts -->
+    <script src="https://cdn.amcharts.com/lib/5/index.js"></script>
+    <script src="https://cdn.amcharts.com/lib/5/hierarchy.js"></script>
+    <script src="https://cdn.amcharts.com/lib/5/themes/Animated.js"></script>
+    <script src="https://cdn.amcharts.com/lib/5/themes/ResponsiveMax.js"></script>
+    <script src="https://cdn.amcharts.com/lib/5/themes/Adaptive.js"></script>
+
+    <script>
+      var orgData = [{
+        name: "交通部觀光署",
+        fullName: "交通部觀光署",
+        children: [
+          {
+            name: "內部業務組",
+            fullName: "內部業務組",
+            children: [
+              { name: "企劃組", fullName: "企劃組", value: 5 },
+              { name: "國際組", fullName: "國際組", value: 5 },
+              { name: "旅行業組", fullName: "旅行業組", value: 5 },
+              { name: "旅宿組", fullName: "旅宿組", value: 5 },
+              { name: "景區發展組", fullName: "景區發展組", value: 5 },
+              { name: "旅遊推廣組", fullName: "旅遊推廣組", value: 5 }
+            ]
+          },
+          {
+            name: "行政支援單位",
+            fullName: "行政支援單位",
+            children: [
+              { name: "人事室", fullName: "人事室", value: 4 },
+              { name: "主計室", fullName: "主計室", value: 4 },
+              { name: "政風室", fullName: "政風室", value: 4 },
+              { name: "資訊室", fullName: "資訊室", value: 4 },
+              { name: "秘書室", fullName: "秘書室", value: 4 }
+            ]
+          },
+          {
+            name: "公關與服務中心",
+            fullName: "公關與服務中心",
+            children: [
+              { name: "公關室", fullName: "公關室", value: 4 },
+              { name: "旅遊服務中心", fullName: "旅遊服務中心", value: 4 },
+              { name: "桃園機場旅服", fullName: "臺灣桃園國際機場旅客服務中心", value: 4 },
+              { name: "高雄機場旅服", fullName: "高雄國際機場旅客服務中心", value: 4 }
+            ]
+          },
+          {
+            name: "駐外辦事處",
+            fullName: "駐外辦事處",
+            children: [
+              {
+                name: "亞洲地區",
+                fullName: "亞洲地區駐外辦事處",
+                children: [
+                  { name: "東京", fullName: "東京辦事處", value: 2 },
+                  { name: "大阪", fullName: "大阪辦事處", value: 2 },
+                  { name: "首爾", fullName: "首爾辦事處", value: 2 },
+                  { name: "釜山", fullName: "釜山辦事處", value: 2 },
+                  { name: "曼谷", fullName: "曼谷辦事處", value: 2 },
+                  { name: "新加坡", fullName: "新加坡辦事處", value: 2 },
+                  { name: "吉隆坡", fullName: "吉隆坡辦事處", value: 2 },
+                  { name: "胡志明市", fullName: "胡志明市辦事處", value: 2 },
+                  { name: "香港", fullName: "香港辦事處", value: 2 },
+                  { name: "北京", fullName: "北京辦事處", value: 2 },
+                  { name: "上海/福州", fullName: "上海（福州）辦事處", value: 2 }
+                ]
+              },
+              {
+                name: "美洲地區",
+                fullName: "美洲地區駐外辦事處",
+                children: [
+                  { name: "紐約", fullName: "紐約辦事處", value: 2 },
+                  { name: "洛杉磯", fullName: "洛杉磯辦事處", value: 2 },
+                  { name: "舊金山", fullName: "舊金山辦事處", value: 2 }
+                ]
+              },
+              {
+                name: "歐洲地區",
+                fullName: "歐洲地區駐外辦事處",
+                children: [
+                  { name: "倫敦", fullName: "倫敦辦事處", value: 2 },
+                  { name: "法蘭克福", fullName: "法蘭克福辦事處", value: 2 }
+                ]
+              }
+            ]
+          },
+          {
+            name: "13處國家風景區",
+            fullName: "13處國家風景區管理處",
+            children: [
+              { name: "東北角及宜蘭海岸", fullName: "東北角及宜蘭海岸國家風景區管理處", value: 3 },
+              { name: "東部海岸", fullName: "東部海岸國家風景區管理處", value: 3 },
+              { name: "花東縱谷", fullName: "花東縱谷國家風景區管理處", value: 3 },
+              { name: "澎湖", fullName: "澎湖國家風景區管理處", value: 3 },
+              { name: "馬祖", fullName: "馬祖國家風景區管理處", value: 3 },
+              { name: "北海岸及觀音山", fullName: "北海岸及觀音山國家風景區管理處", value: 3 },
+              { name: "參山", fullName: "參山國家風景區管理處", value: 3 },
+              { name: "日月潭", fullName: "日月潭國家風景區管理處", value: 3 },
+              { name: "阿里山", fullName: "阿里山國家風景區管理處", value: 3 },
+              { name: "雲嘉南濱海", fullName: "雲嘉南濱海國家風景區管理處", value: 3 },
+              { name: "西拉雅", fullName: "西拉雅國家風景區管理處", value: 3 },
+              { name: "茂林", fullName: "茂林國家風景區管理處", value: 3 },
+              { name: "大鵬灣", fullName: "大鵬灣國家風景區管理處", value: 3 }
+            ]
+          }
+        ]
+      }];
+
+      var chartsInitialized = {
+        force: false,
+        sunburst: false,
+        partition: false
+      };
+
+      function initForceChart() {
+        if (chartsInitialized.force) return;
+        var root = am5.Root.new("pane-force");
+        root.setThemes([
+          am5themes_Animated.new(root),
+          am5themes_Adaptive.new(root, { baseColor: 0x6366f1, baseColor2: 0xf43f5e, count: 7, mapShade: true, keepContrast: true }),
+          am5themes_ResponsiveMax.new(root)
+        ]);
+        var chart = root.container.children.push(am5.SerialChartContainer.new(root, {
+          width: am5.percent(100),
+          height: am5.percent(100),
+          layout: root.verticalLayout
+        }));
+        var series = chart.series.push(am5hierarchy.ForceDirected.new(root, {
+          singleBranchOnly: false,
+          downDepth: 1,
+          initialDepth: 2,
+          valueField: "value",
+          categoryField: "name",
+          childDataField: "children",
+          centerStrength: 0.5,
+          minRadius: am5.percent(2.5),
+          maxRadius: am5.percent(9)
+        }));
+        series.circles.template.setAll({
+          shadowColor: am5.color(0x000000),
+          shadowOpacity: 0.25,
+          shadowBlur: 10,
+          shadowOffsetX: 2,
+          shadowOffsetY: 4
+        });
+        series.nodes.template.set("tooltipText", "{fullName}");
+        series.data.setAll(orgData);
+        series.set("selectedDataItem", series.dataItems[0]);
+        series.appear(1000, 100);
+        chartsInitialized.force = true;
+      }
+
+      function initSunburstChart() {
+        if (chartsInitialized.sunburst) return;
+        var root = am5.Root.new("pane-sunburst");
+        root.setThemes([
+          am5themes_Animated.new(root),
+          am5themes_Adaptive.new(root, { baseColor: 0x6366f1, baseColor2: 0xf43f5e, count: 7, mapShade: true, keepContrast: true }),
+          am5themes_ResponsiveMax.new(root)
+        ]);
+        var chart = root.container.children.push(am5.SerialChartContainer.new(root, {
+          width: am5.percent(100),
+          height: am5.percent(100),
+          layout: root.verticalLayout
+        }));
+        var series = chart.series.push(am5hierarchy.Sunburst.new(root, {
+          singleBranchOnly: true,
+          downDepth: 10,
+          initialDepth: 10,
+          valueField: "value",
+          categoryField: "name",
+          childDataField: "children"
+        }));
+        series.nodes.template.set("tooltipText", "{fullName}");
+        series.data.setAll(orgData);
+        series.set("selectedDataItem", series.dataItems[0]);
+        series.appear(1000, 100);
+        chartsInitialized.sunburst = true;
+      }
+
+      function initPartitionChart() {
+        if (chartsInitialized.partition) return;
+        var root = am5.Root.new("pane-partition");
+        root.setThemes([
+          am5themes_Animated.new(root),
+          am5themes_Adaptive.new(root, { baseColor: 0x6366f1, baseColor2: 0xf43f5e, count: 6, mapShade: true, keepContrast: true }),
+          am5themes_ResponsiveMax.new(root)
+        ]);
+        var chart = root.container.children.push(am5.SerialChartContainer.new(root, {
+          width: am5.percent(100),
+          height: am5.percent(100),
+          layout: root.verticalLayout
+        }));
+        var series = chart.series.push(am5hierarchy.Partition.new(root, {
+          singleBranchOnly: false,
+          orientation: "horizontal",
+          downDepth: 10,
+          initialDepth: 10,
+          valueField: "value",
+          categoryField: "name",
+          childDataField: "children"
+        }));
+        function turnLabel(width, rectangle) {
+          var label = rectangle.dataItem && rectangle.dataItem.get("label");
+          if (label) {
+            label.set("rotation", rectangle.width() < 100 && rectangle.width() < rectangle.height() ? 90 : 0);
+          }
+        }
+        series.rectangles.template.on("width", turnLabel);
+        series.rectangles.template.on("height", turnLabel);
+        series.nodes.template.set("tooltipText", "{fullName}");
+        series.data.setAll(orgData);
+        series.set("selectedDataItem", series.dataItems[0]);
+        series.appear(1000, 100);
+        chartsInitialized.partition = true;
+      }
+
+      function switchChart(type, evt) {
+        var buttons = document.querySelectorAll('.btn');
+        buttons.forEach(btn => {
+          btn.classList.remove('bg-white/30', 'text-white', 'shadow-md');
+          btn.classList.add('text-indigo-100', 'hover:text-white');
+        });
+        
+        evt.currentTarget.classList.add('bg-white/30', 'text-white', 'shadow-md');
+        evt.currentTarget.classList.remove('text-indigo-100');
+        
+        var panes = document.querySelectorAll('.chart-pane');
+        panes.forEach(pane => pane.classList.remove('active'));
+
+        if (type === 'force') {
+          document.getElementById('pane-force').classList.add('active');
+          initForceChart();
+        } else if (type === 'sunburst') {
+          document.getElementById('pane-sunburst').classList.add('active');
+          initSunburstChart();
+        } else if (type === 'partition') {
+          document.getElementById('pane-partition').classList.add('active');
+          initPartitionChart();
+        }
+      }
+
+      window.onload = function() {
+        initForceChart();
+      };
+    </script>
+  </body>
+</html>
